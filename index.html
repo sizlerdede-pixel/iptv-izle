@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Özel IPTV Giriş Paneli</title>
+    <style>
+        /* Modern ve Karanlık Tema Tasarımı */
+        body { 
+            background: #0f0c29; 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { 
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 40px; 
+            border-radius: 20px; 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            width: 100%; 
+            max-width: 350px; 
+            text-align: center; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        h2 { margin-bottom: 25px; color: #00d2ff; text-transform: uppercase; letter-spacing: 2px; }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            border: none; 
+            background: rgba(255, 255, 255, 0.1); 
+            color: white; 
+            outline: none; 
+            box-sizing: border-box;
+        }
+        input::placeholder { color: #bbb; }
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background: #e94560; 
+            border: none; 
+            color: white; 
+            font-weight: bold; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: 0.3s;
+        }
+        button:hover { background: #ff4d6d; transform: translateY(-2px); }
+        #result { 
+            margin-top: 25px; 
+            padding: 15px; 
+            background: rgba(0, 255, 204, 0.1); 
+            border-radius: 8px; 
+            display: none; 
+            word-break: break-all; 
+            font-size: 13px;
+        }
+        a { color: #00ffcc; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>IPTV PANEL</h2>
+    <input type="text" id="url" placeholder="Sunucu URL (http://dns.com:8080)">
+    <input type="text" id="user" placeholder="Kullanıcı Adı">
+    <input type="password" id="pass" placeholder="Şifre">
+    <button onclick="generateLink()">BAĞLANTIYI OLUŞTUR</button>
+    
+    <div id="result">
+        <strong>M3U Linkiniz Hazır:</strong><br><br>
+        <a id="m3u-link" href="#" target="_blank">Buraya Tıkla ve İzle</a>
+    </div>
+</div>
+
+<script>
+    function generateLink() {
+        const url = document.getElementById('url').value;
+        const user = document.getElementById('user').value;
+        const pass = document.getElementById('pass').value;
+        
+        if(!url || !user || !pass) {
+            alert("Lütfen tüm alanları doldurun!");
+            return;
+        }
+
+        // Xtream Codes standart link yapısı
+        const finalUrl = `${url}/get.php?username=${user}&password=${pass}&type=m3u_plus&output=ts`;
+        
+        const resultDiv = document.getElementById('result');
+        const linkElement = document.getElementById('m3u-link');
+        
+        linkElement.href = finalUrl;
+        linkElement.innerText = "Yayın Listesini Aç / İndir";
+        resultDiv.style.display = "block";
+    }
+</script>
+
+</body>
+</html>
