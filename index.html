@@ -3,46 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Ultra IPTV Player</title>
+    <title>Pro IPTV Player</title>
     <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <style>
-        body { background: #0b0e14; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .container { background: #151921; padding: 25px; border-radius: 15px; width: 100%; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); margin-bottom: 20px; border: 1px solid #232936; }
-        h2 { text-align: center; color: #00d2ff; margin-top: 0; }
-        .input-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        input { padding: 12px; border-radius: 8px; border: none; background: #232936; color: white; outline: none; }
-        .btn-box { display: flex; gap: 10px; }
-        button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        body { background: #0b0e14; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: #151921; padding: 20px; border-radius: 12px; width: 100%; max-width: 600px; text-align: center; }
+        input { width: 90%; padding: 10px; margin: 5px 0; border-radius: 5px; border: none; background: #232936; color: white; }
+        .btn-box { margin-top: 15px; display: flex; gap: 10px; }
+        button { flex: 1; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
         .btn-prime { background: #e94560; color: white; }
         .btn-test { background: #4ecca3; color: white; }
-        button:hover { opacity: 0.8; transform: translateY(-2px); }
-        .video-container { width: 100%; max-width: 800px; background: black; border-radius: 10px; overflow: hidden; display: none; border: 2px solid #30363d; }
-        #status { text-align: center; margin-top: 10px; font-size: 0.9rem; color: #8b949e; }
+        .video-container { width: 100%; max-width: 800px; margin-top: 20px; display: none; background: #000; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>IPTV SMART PLAYER</h2>
-    <div class="input-group">
-        <input type="text" id="url" placeholder="Sunucu URL">
-        <input type="text" id="user" placeholder="Kullanıcı Adı">
-        <input type="password" id="pass" placeholder="Şifre">
-    </div>
+    <input type="text" id="url" placeholder="Sunucu URL (örn: http://dns.com:8080)">
+    <input type="text" id="user" placeholder="Kullanıcı Adı">
+    <input type="password" id="pass" placeholder="Şifre">
     <div class="btn-box">
         <button class="btn-prime" onclick="playIPTV()">YAYINI BAŞLAT</button>
         <button class="btn-test" onclick="playFree()">ÜCRETSİZ TEST ET</button>
     </div>
-    <p id="status">Bilgileri girin veya testi başlatın.</p>
 </div>
 
 <div id="player-box" class="video-container">
-    <video id="my-video" class="video-js vjs-big-play-centered vjs-16-9" controls preload="auto" width="800" data-setup="{}">
-        <p class="vjs-no-js">Videoyu izlemek için JavaScript'i etkinleştirin.</p>
+    <video id="my-video" class="video-js vjs-default-skin vjs-16-9" controls preload="auto" data-setup='{}'>
+        <source id="video-source" src="" type="application/x-mpegURL">
     </video>
 </div>
 
 <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-contrib-hls@5.15.0/dist/videojs-contrib-hls.min.js"></script>
+
 <script>
     var player = videojs('my-video');
 
@@ -50,26 +45,24 @@
         const u = document.getElementById('url').value;
         const n = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
-        if(!u || !n || !p) { alert("Lütfen tüm bilgileri girin!"); return; }
+        if(!u || !n || !p) { alert("Eksik bilgi!"); return; }
         
-        // Genelde .m3u8 veya .ts formatı oynatıcılar için daha uygundur
-        const streamUrl = `${u}/live/${n}/${p}/1.m3u8`; 
-        startVideo(streamUrl, "Özel yayınınız yükleniyor...");
+        // Önemli: IPTV sunucuları genelde canlı yayın için bu yolu kullanır
+        const streamUrl = u + "/live/" + n + "/" + p + "/1.m3u8"; 
+        loadStream(streamUrl);
     }
 
     function playFree() {
-        // Örnek bir açık kaynaklı test yayını (HLS formatında)
-        const testUrl = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
-        startVideo(testUrl, "Ücretsiz test yayını başlatıldı.");
+        // Bu link her tarayıcıda çalışan standart bir test linkidir
+        const testUrl = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+        loadStream(testUrl);
     }
 
-    function startVideo(url, msg) {
+    function loadStream(url) {
         document.getElementById('player-box').style.display = "block";
-        document.getElementById('status').innerText = msg;
         player.src({ type: 'application/x-mpegURL', src: url });
         player.play();
     }
 </script>
-
 </body>
 </html>
