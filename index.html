@@ -3,66 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Özel IPTV Giriş Paneli</title>
+    <title>Özel IPTV Panel & Test</title>
     <style>
-        /* Modern ve Karanlık Tema Tasarımı */
-        body { 
-            background: #0f0c29; 
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
-            color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-        }
-        .container { 
-            background: rgba(255, 255, 255, 0.05); 
-            padding: 40px; 
-            border-radius: 20px; 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            width: 100%; 
-            max-width: 350px; 
-            text-align: center; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        }
-        h2 { margin-bottom: 25px; color: #00d2ff; text-transform: uppercase; letter-spacing: 2px; }
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border-radius: 8px; 
-            border: none; 
-            background: rgba(255, 255, 255, 0.1); 
-            color: white; 
-            outline: none; 
-            box-sizing: border-box;
-        }
-        input::placeholder { color: #bbb; }
-        button { 
-            width: 100%; 
-            padding: 15px; 
-            background: #e94560; 
-            border: none; 
-            color: white; 
-            font-weight: bold; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            margin-top: 20px; 
-            transition: 0.3s;
-        }
-        button:hover { background: #ff4d6d; transform: translateY(-2px); }
-        #result { 
-            margin-top: 25px; 
-            padding: 15px; 
-            background: rgba(0, 255, 204, 0.1); 
-            border-radius: 8px; 
-            display: none; 
-            word-break: break-all; 
-            font-size: 13px;
-        }
+        body { background: #0f0c29; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 380px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        h2 { margin-bottom: 20px; color: #00d2ff; letter-spacing: 1px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white; outline: none; box-sizing: border-box; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .btn-connect { padding: 15px; background: #e94560; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-test { padding: 12px; background: #4ecca3; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+        button:hover { opacity: 0.8; transform: translateY(-2px); }
+        #result { margin-top: 25px; padding: 15px; background: rgba(0, 255, 204, 0.1); border-radius: 8px; display: none; word-break: break-all; }
         a { color: #00ffcc; text-decoration: none; font-weight: bold; }
     </style>
 </head>
@@ -73,11 +24,15 @@
     <input type="text" id="url" placeholder="Sunucu URL (http://dns.com:8080)">
     <input type="text" id="user" placeholder="Kullanıcı Adı">
     <input type="password" id="pass" placeholder="Şifre">
-    <button onclick="generateLink()">BAĞLANTIYI OLUŞTUR</button>
+    
+    <div class="btn-group">
+        <button class="btn-connect" onclick="generateLink()">BAĞLANTIYI OLUŞTUR</button>
+        <button class="btn-test" onclick="loadFreeTest()">ÜCRETSİZ TEST KANALLARI YÜKLE</button>
+    </div>
     
     <div id="result">
-        <strong>M3U Linkiniz Hazır:</strong><br><br>
-        <a id="m3u-link" href="#" target="_blank">Buraya Tıkla ve İzle</a>
+        <strong id="res-title">Bağlantı Hazır:</strong><br><br>
+        <a id="m3u-link" href="#" target="_blank">Listeyi Aç / İndir</a>
     </div>
 </div>
 
@@ -86,21 +41,23 @@
         const url = document.getElementById('url').value;
         const user = document.getElementById('user').value;
         const pass = document.getElementById('pass').value;
-        
-        if(!url || !user || !pass) {
-            alert("Lütfen tüm alanları doldurun!");
-            return;
-        }
-
-        // Xtream Codes standart link yapısı
+        if(!url || !user || !pass) { alert("Lütfen bilgileri girin!"); return; }
         const finalUrl = `${url}/get.php?username=${user}&password=${pass}&type=m3u_plus&output=ts`;
-        
-        const resultDiv = document.getElementById('result');
+        showResult(finalUrl, "Özel Abonelik Linkiniz:");
+    }
+
+    function loadFreeTest() {
+        // Dünyadan yasal ve açık kaynaklı örnek bir m3u listesi
+        const freeUrl = "https://iptv-org.github.io/iptv/index.m3u";
+        showResult(freeUrl, "Ücretsiz Dünya Kanalları Yüklendi:");
+    }
+
+    function showResult(link, title) {
+        document.getElementById('res-title').innerText = title;
         const linkElement = document.getElementById('m3u-link');
-        
-        linkElement.href = finalUrl;
-        linkElement.innerText = "Yayın Listesini Aç / İndir";
-        resultDiv.style.display = "block";
+        linkElement.href = link;
+        linkElement.innerText = "Yayınları Başlat (VLC veya Player ile)";
+        document.getElementById('result').style.display = "block";
     }
 </script>
 
